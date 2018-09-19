@@ -44,15 +44,15 @@ function usage {
     -h   Show this help text
     -p   Don't do anything, just print the result of the variable expansion(s)
     -f   Specify a file to read variables from
-    -s   Don't print warning messages (for example if no variables are found)
+    -q   Don't print warning messages (for example if no variables are found)
 
 Default values in the template file will be ignored if they are provided by the
 config file. Both config file values and default values from the template will
 be ignored if the variable is set in the environment.
 
 Examples:
-    VAR1=Something VAR2=1.2.3 ${PROGNAME} test.txt 
-    ${PROGNAME} -f my-variables.txt test.txt 
+    VAR1=Something VAR2=1.2.3 ${PROGNAME} test.txt
+    ${PROGNAME} -f my-variables.txt test.txt
     ${PROGNAME} -f my-variables.txt test.txt > new-test.txt"
 }
 
@@ -62,7 +62,7 @@ while getopts ":hpf:q" opt; do
         h)
             usage
             exit 0
-            ;;        
+            ;;
         p)
             print_only="true"
             ;;
@@ -95,7 +95,7 @@ shift $((OPTIND-1))
 if [ $# -eq 0 ]; then
     echo "${PROGNAME}: Please provide a template file." >&2
     usage
-    exit 1    
+    exit 1
 fi
 
 # check that template file exists
@@ -172,7 +172,7 @@ if [[ -n "${config_file+x}" ]]; then
     for ext_assignment in $ext_assignments; do
         eval_assignment_if_unset $ext_assignment
     done
-fi    
+fi
 
 # Array of subtitutions to be used to process the $template file
 declare -a replaces
@@ -190,7 +190,7 @@ for default_assignment in $defaults; do
     # remove define line
     replaces+=("-e")
     replaces+=("/^{{${var}=/d")
-    
+
     # add the variable to the variables to be replaced
     vars="${vars} ${var}"
 done
@@ -215,7 +215,7 @@ for var in $vars; do
     if [[ -n "${!var+x}" ]]; then
         # get value of variable in $var
         value="${!var}"
-    else 
+    else
         value=""
         if [[ $quiet != "true" ]]; then
             echo "Warning: The variable '$var' has no value." >&2
